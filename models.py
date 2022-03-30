@@ -20,7 +20,6 @@ class User(BaseModel):
     first_name: str
     last_name: str
     middle_name: Optional[str]
-    full_name: str = first_name + ' ' + middle_name + ' ' + last_name
     email: str
     password: str
     gender: Gender
@@ -32,7 +31,6 @@ class UpdateUser(BaseModel):
     first_name: Optional[str]
     last_name: Optional[str]
     middle_name: Optional[str]
-    full_name: str = first_name + ' ' + middle_name + ' ' + last_name
     email: Optional[str]
     password: Optional[str]
     gender: Optional[Gender]
