@@ -1,5 +1,5 @@
-from uuid import UUID, uuid4
-from fastapi import FastAPI, HTTPException, Query, Path
+from uuid import UUID
+from fastapi import FastAPI, HTTPException, Path
 
 from models import UpdateUser, User
 from helper import update_attrs
