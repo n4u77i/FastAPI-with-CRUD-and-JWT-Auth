@@ -1,48 +1,21 @@
-from uuid import UUID
-from fastapi import FastAPI, HTTPException, Path
+import uvicorn
+from fastapi import FastAPI
 
-from models import UpdateUser, User
-from helper import update_attrs
-from users import db
+from config import setting
+from apps.users.router import router as users_router
+from apps.auth.router import router as auth_router
 
-app = FastAPI()
+app = FastAPI(
+    title='FastAPI user auth with JWT'
+)
 
+app.include_router(users_router, tags=['Users'], prefix='')
+app.include_router(auth_router, tags=['Login / Sign-up'], prefix='/auth')
 
-@app.get('/api/v1/users')
-def fetch_users():
-    return db
-
-
-@app.post('/api/v1/users')
-def register_user(user: User):
-    db.append(user)
-    return {'Id': user.id}
-
-
-@app.delete('/api/v1/users/{user_id}')
-def delete_user(user_id: UUID = Path(None, description='ID of the user you want to delete')):
-    for user in db:
-        if user.id == user_id:
-            db.remove(user)
-            return {"Success": "User deleted successfully!"}
-    raise HTTPException(
-        status_code=404,
-        detail='User with ID not found.'
-    )
-    
-    
-@app.put('/api/v1/users/{user_id}')
-def update_user(
-        *,
-        user_id: UUID = Path(None, description='ID of the user you want to update'),
-        update_user: UpdateUser
-    ):
-    for user in db:
-        if user.id == user_id:
-            update_attrs(user, update_user)
-            return {"Success": user}
-        
-    raise HTTPException(
-        status_code=404,
-        detail='User with ID not found.'
+if __name__ == '__main__':
+    uvicorn.run(
+        'main:app',
+        host=setting.HOST,
+        port=setting.PORT,
+        reload=setting.DEBUG_MODE,
     )
